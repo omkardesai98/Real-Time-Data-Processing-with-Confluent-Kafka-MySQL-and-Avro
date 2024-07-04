@@ -1,0 +1,52 @@
+CREATE TABLE product_audit (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    operation VARCHAR(10),
+    product_id INT,
+    name VARCHAR(255),
+    category VARCHAR(255),
+    price FLOAT,
+    last_updated TIMESTAMP,
+    audit_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+SELECT * FROM product ORDER BY last_updated ASC;
+SELECT product_id,name,category,price,last_updated FROM product_audit WHERE audit_timestamp > '{date}' ORDER BY audit_timestamp ASC;
+
+
+-- -------insert trigger-----
+delimiter $$
+CREATE TRIGGER product_insert_audit
+AFTER INSERT ON product
+FOR EACH ROW
+BEGIN
+    INSERT INTO product_audit (operation, product_id, name, category, price, last_updated)
+    VALUES ('INSERT', NEW.id, NEW.name, NEW.category, NEW.price, NEW.last_updated);
+END $$
+delimiter ;
+
+
+
+
+-- --------- update trigger ---------
+delimiter $$
+CREATE TRIGGER product_update_audit
+AFTER UPDATE ON product
+FOR EACH ROW
+BEGIN
+    INSERT INTO product_audit (operation, product_id, name, category, price, last_updated)
+    VALUES ('UPDATE', NEW.id, NEW.name, NEW.category, NEW.price, NEW.last_updated);
+END $$
+delimiter ;
+
+
+
+-- ------------delete trigger ---------
+delimiter $$
+CREATE TRIGGER product_delete_audit
+AFTER DELETE ON product
+FOR EACH ROW
+BEGIN
+    INSERT INTO product_audit (operation, product_id, name, category, price, last_updated)
+    VALUES ('DELETE', NEW.id, NEW.name, NEW.category, NEW.price, NEW.last_updated);
+END $$
+delimiter ;
