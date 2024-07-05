@@ -26,7 +26,7 @@ schema_str = schema_registry_client.get_latest_version(subject_name).schema.sche
 
 # Create Avro serializer for value
 avro_serializer = AvroSerializer(schema_registry_client, schema_str)
-key_serializer = StringSerializer('utf-8')  # Keep this as IntegerSerializer for integer keys
+key_serializer = StringSerializer('utf-8')  
 
 # Define Serializing Producer
 producer = SerializingProducer({
